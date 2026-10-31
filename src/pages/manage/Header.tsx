@@ -15,12 +15,13 @@ import {
   useColorModeValue,
 } from "@hope-ui/solid"
 import { TiThMenu } from "solid-icons/ti"
-import { IoExit } from "solid-icons/io"
+import { IoExit, IoHome } from "solid-icons/io"
+import { BsFingerprint } from "solid-icons/bs"
 import { SwitchColorMode, SwitchLanguageWhite } from "~/components"
 import { useFetch, useRouter, useT } from "~/hooks"
 import { SideMenu } from "./SideMenu"
 import { side_menu_items } from "./sidemenu_items"
-import { changeToken, handleResp, notify, r } from "~/utils"
+import { changeToken, handleResp, joinBase, notify, r } from "~/utils"
 import { PResp } from "~/types"
 const { isOpen, onOpen, onClose } = createDisclosure()
 const [logOutReqLoading, logOutReq] = useFetch((): PResp<any> =>
@@ -72,6 +73,22 @@ const Header = () => {
           </Heading>
         </HStack>
         <HStack spacing="$1">
+          <IconButton
+            aria-label={t("manage.sidemenu.home")}
+            icon={<IoHome />}
+            onClick={() => {
+              window.open(joinBase("/"), "_self")
+            }}
+            size="sm"
+          />
+          <IconButton
+            aria-label={t("manage.sidemenu.profile")}
+            icon={<BsFingerprint />}
+            onClick={() => {
+              to("/@manage")
+            }}
+            size="sm"
+          />
           <IconButton
             aria-label="logout"
             icon={<IoExit />}
