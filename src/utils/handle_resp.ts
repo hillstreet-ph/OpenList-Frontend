@@ -1,5 +1,6 @@
 import { Resp } from "~/types"
 import { bus, notify } from "."
+import { changeToken } from "./request"
 
 export const handleResp = <T>(
   resp: Resp<T>,
@@ -15,6 +16,17 @@ export const handleResp = <T>(
   } else {
     notify_error && notify.error(resp.message)
     if (auth && resp.code === 401) {
+      // The session this device holds is no longer accepted, so drop it before
+      // navigating. While it stays in `localStorage` and in the shared
+      // `Authorization` header, every later request — including the ones the
+      // login page's own boot makes — is rejected the same way, and the user
+      // watches the same error toast arrive once per call instead of once per
+      // sign-in. Clearing it here means the next request is a plain guest
+      // request and the sign-in form is the only thing left to do.
+      //
+      // A wrong password does not land here: the login and the passkey/2FA
+      // calls use `handleRespWithoutAuthAndNotify`, which passes `auth = false`.
+      changeToken()
       if (location.pathname === "/@manage") {
         bus.emit("to", "/")
       } else {
