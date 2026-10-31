@@ -19,7 +19,7 @@ import { FiLogIn } from "solid-icons/fi"
 import { SiMetabase } from "solid-icons/si"
 import { CgDatabase, CgShare } from "solid-icons/cg"
 import { OcWorkflow2 } from "solid-icons/oc"
-import { IoCopy, IoMove, IoHome, IoMagnetOutline } from "solid-icons/io"
+import { IoCopy, IoMove, IoMagnetOutline } from "solid-icons/io"
 import { Component, lazy } from "solid-js"
 import { Group, UserRole } from "~/types"
 import {
@@ -308,12 +308,5 @@ export const side_menu_items: SideMenuItem[] = [
     to: "https://doc.oplist.org",
     role: UserRole.GUEST,
     external: true,
-  },
-  {
-    title: "manage.sidemenu.home",
-    icon: IoHome,
-    to: "/",
-    role: UserRole.GUEST,
-    refresh: true,
   },
 ]
