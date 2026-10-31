@@ -1,5 +1,6 @@
 import axios from "axios"
 import { api, log } from "."
+import { describeRequestError } from "./request_error"
 
 const instance = axios.create({
   baseURL: api + "/api",
@@ -54,13 +55,22 @@ instance.interceptors.response.use(
     // 时附加。
     const body = error.response?.data as
       { message?: string; data?: unknown } | undefined
+    const cancelled = axios.isCancel(error)
     const result: {
       code: number | undefined
       message: string
       data?: unknown
     } = {
-      code: axios.isCancel(error) ? -1 : error.response?.status,
-      message: body?.message || error.message,
+      code: cancelled ? -1 : error.response?.status,
+      // A server message always wins; otherwise say what a person can act on
+      // instead of leaking the browser's abort wording into the toast.
+      message:
+        body?.message ||
+        describeRequestError({
+          status: error.response?.status,
+          cancelled,
+          fallback: error.message,
+        }),
     }
     if (body && typeof body === "object" && body.data != null) {
       result.data = body.data
