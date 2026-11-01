@@ -20,6 +20,8 @@ import {
   SeedOperationRequest,
   SeedOperationResult,
   SeedParseResult,
+  AccessToken,
+  CreatedAccessToken,
 } from "~/types"
 import { r } from "."
 
@@ -383,3 +385,31 @@ export const seedUpdate = (
   request: SeedOperationRequest,
 ): PResp<SeedOperationResult> =>
   r.post("/fs/seed/update", seedWireRequest(request))
+
+// ---------- personal access tokens (developer page) ----------
+
+/**
+ * Lists the signed-in user's personal access tokens. The raw secret is never
+ * included — only the display prefix.
+ */
+export const listMyTokens = (page = 1, per_page = 50): PPageResp<AccessToken> =>
+  r.get(`/me/token/list?page=${page}&per_page=${per_page}`)
+
+/**
+ * Creates a token. `expires_in` is in hours; 0 means it never expires.
+ * The returned `token` is shown exactly once and cannot be recovered.
+ */
+export const createMyToken = (
+  name: string,
+  scopes: string[],
+  expiresIn: number,
+): PResp<CreatedAccessToken> =>
+  r.post("/me/token/create", {
+    name,
+    scopes,
+    expires_in: expiresIn,
+  })
+
+/** Revokes a token by id; the backend scopes the lookup to the caller. */
+export const revokeMyToken = (id: number): PEmptyResp =>
+  r.post(`/me/token/revoke?id=${id}`)

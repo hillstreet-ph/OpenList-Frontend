@@ -39,7 +39,8 @@
     "media_transcode": "Transcoding Settings",
     "transcode": "Transcode",
     "plugins": "Plugins",
-    "seed": "Seed"
+    "seed": "Seed",
+    "developer": "Developer"
   },
   "title": "OpenList Management",
   "media_lib": {
@@ -111,5 +112,73 @@
   "add_storage-tips": "You may need to fill in some information in the newly opened tab.",
   "messenger-tips": "You may need to fill in some information on this tab as prompted.",
   "load_default_setting": "Load default settings",
-  "load_default_setting_success": "Loaded successfully, not saved"
+  "load_default_setting_success": "Loaded successfully, not saved",
+  "brand": "Open-Box",
+  "nav_open": "Open navigation",
+  "nav_collapse": "Collapse sidebar to icons",
+  "nav_expand": "Expand sidebar",
+  "nav_search_placeholder": "Search the console",
+  "nav_search_empty": "No page matches this search",
+  "logout": "Sign out",
+  "section": {
+    "resources": "Resources",
+    "support": "Support"
+  },
+  "pat": {
+    "intro": "Issue personal access tokens for scripts, API clients, and MCP servers. Tokens are scoped and can be revoked at any time.",
+    "tokens_title": "Personal access tokens",
+    "tokens_hint": "Each token is shown once, at creation. Only its hash is stored.",
+    "create": "Create token",
+    "loading": "Loading…",
+    "no_tokens": "No tokens yet. Create one to call the API as yourself.",
+    "name_placeholder": "e.g. backup script",
+    "name_too_long": "Names are limited to 64 characters.",
+    "expiry_label": "Expiration",
+    "expires_at": "Expires",
+    "never_used": "Never used",
+    "revoke": "Revoke",
+    "revoke_tooltip": "Revoke this token immediately",
+    "revoke_success": "Token revoked",
+    "form_invalid": "Give the token a name and at least one scope.",
+    "reveal_title": "Copy this token now — it will not be shown again.",
+    "reveal_hint": "Store it in your client or secret manager. If you lose it, revoke this token and create a new one.",
+    "copy_token": "Copy token",
+    "dismiss": "Done",
+    "usage_title": "Using a token",
+    "usage_hint": "Send it as the Authorization header. Admin and account endpoints still require a login session.",
+    "copy_usage": "Copy",
+    "mcp_hint": "MCP clients connect to the same origin over HTTP with the same header:",
+    "col": {
+      "name": "Name",
+      "token": "Token",
+      "scopes": "Scopes",
+      "state": "Status",
+      "created": "Created",
+      "last_used": "Last used"
+    },
+    "state": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "scopes": {
+      "fs_read": "Read files",
+      "fs_read_hint": "list, search, and file info",
+      "fs_write": "Write files",
+      "fs_write_hint": "upload, mkdir, rename, move, copy, delete",
+      "share_read": "Shares",
+      "share_read_hint": "list and manage your shares",
+      "task_read": "Read tasks",
+      "task_read_hint": "list and inspect running tasks",
+      "task_write": "Control tasks",
+      "task_write_hint": "cancel, retry, and clean up tasks"
+    },
+    "expiry": {
+      "1h": "1 hour",
+      "24h": "24 hours",
+      "7d": "7 days",
+      "30d": "30 days",
+      "never": "Never"
+    }
+  }
 }

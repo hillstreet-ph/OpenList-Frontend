@@ -167,6 +167,15 @@ export const globalStyles = globalCss({
   html: {
     fontFamily: `-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol" !important`,
   },
+  // Respect the OS "reduce motion" setting: keep state changes, drop the travel.
+  "@media (prefers-reduced-motion: reduce)": {
+    "*, *::before, *::after": {
+      animationDuration: "0.01ms !important",
+      animationIterationCount: "1 !important",
+      transitionDuration: "0.01ms !important",
+      scrollBehavior: "auto !important",
+    },
+  },
   "#root": {
     display: "flex",
     flexDirection: "column",
