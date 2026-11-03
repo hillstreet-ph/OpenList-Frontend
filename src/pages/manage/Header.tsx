@@ -1,7 +1,5 @@
 import {
-  Avatar,
   Box,
-  Divider,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -17,37 +15,21 @@ import {
   MenuContent,
   MenuItem,
   MenuTrigger,
-  Tooltip,
   useColorModeValue,
 } from "@hope-ui/solid"
 import { Show } from "solid-js"
 import { IconTypes } from "solid-icons"
 import { TiThMenu } from "solid-icons/ti"
-import {
-  BsBraces,
-  BsFront,
-  BsLayoutSidebar,
-  BsLayoutSidebarReverse,
-} from "solid-icons/bs"
-import {
-  FiChevronDown,
-  FiHome,
-  FiLogOut,
-  FiSettings,
-  FiUser,
-} from "solid-icons/fi"
+import { BsFront } from "solid-icons/bs"
+import { FiChevronDown, FiHome } from "solid-icons/fi"
 import { FaSolidBook } from "solid-icons/fa"
 import { SwitchColorMode, SwitchLanguageWhite } from "~/components"
-import { useFetch, useRouter, useT } from "~/hooks"
-import { navCollapsed, navDrawer, setNavCollapsed } from "./nav_state"
-import { changeToken, handleResp, joinBase, notify, r, tokenVar } from "~/utils"
-import { PResp } from "~/types"
-import { getSetting, me } from "~/store"
+import { useRouter, useT } from "~/hooks"
+import { navDrawer } from "./nav_state"
+import { joinBase, tokenVar } from "~/utils"
+import { getSetting } from "~/store"
 import { SideMenu } from "./SideMenu"
-
-const [logOutReqLoading, logOutReq] = useFetch((): PResp<any> =>
-  r.get("/auth/logout"),
-)
+import { AccountRow } from "./NavControls"
 
 const BrandFallback = () => <Box w="$6" h="$6" />
 
@@ -100,11 +82,13 @@ const BrandMark = () => {
 const MenuAction = (props: {
   icon: IconTypes
   label: string
-  onClick: () => void
+  onSelect: () => void
   danger?: boolean
 }) => (
   <MenuItem
-    onClick={props.onClick}
+    // Hope UI reports mouse and keyboard activation through `onSelect`;
+    // `onClick` never fires on a menu item.
+    onSelect={props.onSelect}
     css={{
       gap: "10px",
       fontSize: "13.5px",
@@ -140,13 +124,6 @@ const Header = () => {
   const t = useT()
   const { to } = useRouter()
   const rule = useColorModeValue("$neutral3", "$neutral4")
-  const logOut = async () => {
-    handleResp(await logOutReq(), () => {
-      changeToken()
-      notify.success(t("manage.logout_success"))
-      to(`/@login?redirect=${encodeURIComponent(location.pathname)}`)
-    })
-  }
   return (
     <Box
       as="header"
@@ -177,32 +154,6 @@ const Header = () => {
           display={{ "@lg": "none" }}
           onClick={navDrawer.onOpen}
         />
-        <Show
-          when={!navCollapsed()}
-          fallback={
-            <Tooltip label={t("manage.nav_expand")} placement="bottom">
-              <IconButton
-                aria-label={t("manage.nav_expand")}
-                icon={<BsLayoutSidebarReverse />}
-                size="sm"
-                variant="ghost"
-                display={{ "@initial": "none", "@lg": "flex" }}
-                onClick={() => setNavCollapsed(false)}
-              />
-            </Tooltip>
-          }
-        >
-          <Tooltip label={t("manage.nav_collapse")} placement="bottom">
-            <IconButton
-              aria-label={t("manage.nav_collapse")}
-              icon={<BsLayoutSidebar />}
-              size="sm"
-              variant="ghost"
-              display={{ "@initial": "none", "@lg": "flex" }}
-              onClick={() => setNavCollapsed(true)}
-            />
-          </Tooltip>
-        </Show>
         <Menu placement="bottom-start">
           <MenuTrigger
             as={Box}
@@ -230,29 +181,17 @@ const Header = () => {
             <MenuAction
               icon={FiHome}
               label={t("manage.sidemenu.home")}
-              onClick={() => window.open(joinBase("/"), "_self")}
+              onSelect={() => window.open(joinBase("/"), "_self")}
             />
             <MenuAction
               icon={FaSolidBook}
               label={t("manage.sidemenu.docs")}
-              onClick={() => window.open("https://doc.oplist.org", "_blank")}
+              onSelect={() => window.open("https://doc.oplist.org", "_blank")}
             />
             <MenuAction
               icon={BsFront}
               label={t("manage.sidemenu.about")}
-              onClick={() => to("/@manage/about")}
-            />
-            <Divider />
-            <MenuAction
-              icon={BsBraces}
-              label={t("manage.sidemenu.developer")}
-              onClick={() => to("/@manage/developer")}
-            />
-            <MenuAction
-              icon={FiLogOut}
-              label={t("manage.logout")}
-              onClick={logOut}
-              danger
+              onSelect={() => to("/@manage/about")}
             />
           </MenuContent>
         </Menu>
@@ -260,71 +199,6 @@ const Header = () => {
       <HStack spacing="$1" alignItems="center">
         <SwitchLanguageWhite />
         <SwitchColorMode />
-        <Menu placement="bottom-end">
-          <MenuTrigger
-            as={Box}
-            aria-label={t("manage.sidemenu.profile")}
-            rounded="$md"
-            css={TriggerCss}
-          >
-            <Avatar
-              size="sm"
-              bg="$info9"
-              name={me().username || undefined}
-              getInitials={(name) => name.slice(0, 1).toUpperCase()}
-              iconLabel={t("manage.sidemenu.profile")}
-              icon={() => <Icon as={FiUser} size={14} aria-hidden="true" />}
-            />
-            <Heading
-              as="span"
-              fontSize="$sm"
-              fontWeight="500"
-              color="$neutral11"
-              display={{ "@initial": "none", "@md": "inline" }}
-            >
-              {me().username}
-            </Heading>
-          </MenuTrigger>
-          <MenuContent minW="220px">
-            <Box
-              px="$3"
-              py="$2"
-              css={{ borderBottom: `1px solid ${tokenVar(rule())}` }}
-            >
-              <Heading
-                as="span"
-                fontSize="$sm"
-                fontWeight="600"
-                display="block"
-                color="$neutral12"
-              >
-                {me().username || t("manage.sidemenu.profile")}
-              </Heading>
-            </Box>
-            <MenuAction
-              icon={FiUser}
-              label={t("manage.sidemenu.profile")}
-              onClick={() => to("/@manage")}
-            />
-            <MenuAction
-              icon={BsBraces}
-              label={t("manage.sidemenu.developer")}
-              onClick={() => to("/@manage/developer")}
-            />
-            <MenuAction
-              icon={FiSettings}
-              label={t("manage.sidemenu.settings")}
-              onClick={() => to("/@manage/settings/site")}
-            />
-            <Divider />
-            <MenuAction
-              icon={FiLogOut}
-              label={t("manage.logout")}
-              onClick={logOut}
-              danger
-            />
-          </MenuContent>
-        </Menu>
       </HStack>
       {/* Mobile navigation drawer shares the sidebar component. */}
       <Drawer
@@ -336,8 +210,17 @@ const Header = () => {
         <DrawerContent maxW="290px">
           <DrawerCloseButton />
           <DrawerHeader color="$info11">{t("manage.title")}</DrawerHeader>
-          <DrawerBody p="$0">
-            <SideMenu onNavigate={navDrawer.onClose} />
+          <DrawerBody
+            p="$0"
+            css={{ display: "flex", flexDirection: "column", minHeight: 0 }}
+          >
+            <Box
+              class="manage-nav-scroll"
+              css={{ flex: "1", minHeight: 0, overflowY: "auto" }}
+            >
+              <SideMenu onNavigate={navDrawer.onClose} />
+            </Box>
+            <AccountRow rail={false} onNavigate={navDrawer.onClose} />
             <HStack spacing="$4" p="$2" color="$neutral11">
               <SwitchLanguageWhite />
               <SwitchColorMode />
