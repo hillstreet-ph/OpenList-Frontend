@@ -1,6 +1,11 @@
 import { createDisclosure } from "@hope-ui/solid"
 import { createSignal } from "solid-js"
 import { createStorageSignal } from "@solid-primitives/storage"
+import {
+  DEFAULT_NAV_WIDTH,
+  clampNavWidth,
+  widthFromPointerX,
+} from "./nav_width"
 
 /**
  * Shared state for the manage console shell.
@@ -26,6 +31,64 @@ export const setNavCollapsed = (collapsed: boolean) =>
   setNavCollapsedRaw(collapsed ? "true" : "false")
 
 export const toggleNavCollapsed = () => setNavCollapsed(!navCollapsed())
+
+/**
+ * Expanded panel width, persisted per browser.
+ *
+ * The stored value is clamped on the way out rather than on the way in: a
+ * hand-edited or stale preference must never produce an unreadable column.
+ */
+const [navWidthRaw, setNavWidthRaw] = createStorageSignal(
+  "open-box.manage.nav-width",
+  String(DEFAULT_NAV_WIDTH),
+)
+
+const storedNavWidth = () =>
+  clampNavWidth(Number.parseInt(navWidthRaw() ?? String(DEFAULT_NAV_WIDTH), 10))
+
+/**
+ * Live drag preview. While a drag is in progress the shell reads this instead
+ * of the persisted value, so moving the pointer does not write to storage on
+ * every frame; the value is committed once, when the pointer is released.
+ */
+const [dragNavWidth, setDragNavWidth] = createSignal<number | null>(null)
+
+/** Width the sidebar should occupy right now (rail mode is applied by the shell). */
+export const navWidth = () => {
+  const preview = dragNavWidth()
+  return preview === null ? storedNavWidth() : preview
+}
+
+export const isNavDragging = () => dragNavWidth() !== null
+
+/** Pointer moved: preview only, nothing persisted yet. */
+export const previewNavWidthFromPointer = (clientX: number) => {
+  const resolved = widthFromPointerX(clientX)
+  if ("collapse" in resolved) {
+    setNavCollapsed(true)
+    setDragNavWidth(null)
+    return
+  }
+  setDragNavWidth(resolved.width)
+}
+
+/** Drag started: the shell drops its width transition for the duration. */
+export const beginNavDrag = () => setDragNavWidth(storedNavWidth())
+
+/** Pointer released: store the width and restore the transition. */
+export const commitNavDrag = () => {
+  const preview = dragNavWidth()
+  if (preview !== null) setNavWidthRaw(String(preview))
+  setDragNavWidth(null)
+}
+
+/** Escape during a drag: forget the preview and keep the stored width. */
+export const cancelNavDrag = () => setDragNavWidth(null)
+
+export const setNavWidth = (width: number) =>
+  setNavWidthRaw(String(clampNavWidth(width)))
+
+export const resetNavWidth = () => setNavWidthRaw(String(DEFAULT_NAV_WIDTH))
 
 /**
  * Collapsed navigation sections. A section id in this set is folded; every

@@ -42,7 +42,7 @@
     "seed": "Seed",
     "developer": "Developer"
   },
-  "title": "OpenList Management",
+  "title": "Open-Box Console",
   "media_lib": {
     "base_title": "Media Basics",
     "base_desc": "Master switch, Emby / OpenSubsonic endpoints and app keys",
@@ -119,6 +119,11 @@
   "nav_expand": "Expand sidebar",
   "nav_search_placeholder": "Search the console",
   "nav_search_empty": "No page matches this search",
+  "nav_title": "Open-Box console",
+  "nav_toggle_shortcut": "Toggle the sidebar with [",
+  "nav_resize": "Resize the sidebar",
+  "nav_resize_hint": "Drag to resize, double-click to reset, or use the arrow keys",
+  "account_menu": "Account",
   "logout": "Sign out",
   "section": {
     "resources": "Resources",
