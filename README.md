@@ -36,3 +36,5 @@ MIT
 ## CREDITS
 
 [OpenList](https://github.com/OpenListTeam/OpenList) is a resilient, community-driven fork of [AList](https://github.com/AlistGo/alist) — built to defend open source against trust-based attacks.
+
+Nexus Development Cycle auto-merged by Hermes on 2026-11-05T00:17Z
